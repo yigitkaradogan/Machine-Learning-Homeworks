@@ -1,0 +1,323 @@
+---
+title: "Untitled"
+format: html
+editor: visual
+---
+
+Downloading necessary libraries (of course there is not any ML libraries)
+
+```{r, message=FALSE, warning=FALSE, include=FALSE}
+library(dplyr)
+library(pander)
+library(tidyverse)
+library(dplyr)
+library(caret)
+```
+
+#### Loading Data
+
+```{r, message=FALSE, warning=FALSE}
+train <- read_csv("C:/Users/yigid/OneDrive/Desktop/Question 3/train.csv")
+train <- select(train, 1:14)
+test <- read_csv("C:/Users/yigid/OneDrive/Desktop/Question 3/test.csv")
+test <- select(test, 1:14)
+```
+
+```{r, include=FALSE}
+train <- train %>%
+  mutate(WBC = gsub("Dec-15", "12-15", WBC),
+         WBC = gsub("01-Feb", "1-2", WBC),
+         WBC = gsub("04-Jun", "4-6", WBC),
+         WBC = gsub("03-May", "3-5", WBC),
+         WBC = gsub("01-Mar", "1-3", WBC),
+         WBC = gsub("02-Apr", "2-4", WBC),
+         WBC = gsub("10-Dec", "10-12", WBC),
+         WBC = gsub("Dec-15", "12-15", WBC),
+         WBC = gsub("04-Aug", "4-8", WBC),
+         WBC = gsub("02-May", "2-5", WBC),
+         WBC = gsub("05-Aug", "5-8", WBC),
+         WBC = gsub("06-Aug", "6-8", WBC),
+         WBC = gsub("08-Oct", "8-10", WBC),
+         WBC = gsub("01-Apr", "1-4", WBC),
+         WBC = gsub("01-May", "1-5", WBC),
+         WBC = gsub("02-Mar", "2-3", WBC),
+         WBC = gsub("03-Oct", "3-10", WBC),
+         WBC = gsub("04-Jul", "4-7", WBC),
+         WBC = gsub("03-Apr", "3-4", WBC),
+         WBC = gsub("03-Jul", "3-7", WBC),
+         WBC = gsub("03-Jun", "3-6", WBC),
+         WBC = gsub("04-May", "4-5", WBC),
+         WBC = gsub("04-Oct", "4-10", WBC),
+         WBC = gsub("05-Jul", "5-7", WBC),
+         WBC = gsub("05-Jun", "5-6", WBC),
+         WBC = gsub("05-Oct", "5-10", WBC),
+         WBC = gsub("07-Aug", "7-8", WBC),
+         WBC = gsub("07-Sep", "7-9", WBC),
+         WBC = gsub("07-Oct", "7-10", WBC),
+         WBC = gsub("08-Dec", "8-12", WBC),
+         WBC = gsub("09-Nov", "9-11", WBC),
+         WBC = gsub("Dec-14", "12-14", WBC),
+         WBC = gsub("Jul-15", "7-15", WBC),
+         WBC = gsub("Nov-15", "11-15", WBC),
+         WBC = gsub("Oct-16", "10-16", WBC),
+         WBC = gsub("Sep-15", "9-15", WBC))
+
+train <- train %>%
+  mutate(RBC = gsub("Dec-15", "12-15", RBC),
+         RBC = gsub("01-Feb", "1-2", RBC),
+         RBC = gsub("04-Jun", "4-6", RBC),
+         RBC = gsub("03-May", "3-5", RBC),
+         RBC = gsub("01-Mar", "1-3", RBC),
+         RBC = gsub("02-Apr", "2-4", RBC),
+         RBC = gsub("10-Dec", "10-12", RBC),
+         RBC = gsub("Dec-15", "12-15", RBC),
+         RBC = gsub("04-Aug", "4-8", RBC),
+         RBC = gsub("02-May", "2-5", RBC),
+         RBC = gsub("05-Aug", "5-8", RBC),
+         RBC = gsub("06-Aug", "6-8", RBC),
+         RBC = gsub("08-Oct", "8-10", RBC),
+         RBC = gsub("01-Apr", "1-4", RBC),
+         RBC = gsub("01-May", "1-5", RBC),
+         RBC = gsub("02-Mar", "2-3", RBC),
+         RBC = gsub("03-Oct", "3-10", RBC),
+         RBC = gsub("04-Jul", "4-7", RBC),
+         RBC = gsub("03-Apr", "3-4", RBC),
+         RBC = gsub("03-Jul", "3-7", RBC),
+         RBC = gsub("03-Jun", "3-6", RBC),
+         RBC = gsub("04-May", "4-5", RBC),
+         RBC = gsub("04-Oct", "4-10", RBC),
+         RBC = gsub("05-Jul", "5-7", RBC),
+         RBC = gsub("05-Jun", "5-6", RBC),
+         RBC = gsub("05-Oct", "5-10", RBC),
+         RBC = gsub("07-Aug", "7-8", RBC),
+         RBC = gsub("07-Sep", "7-9", RBC),
+         RBC = gsub("07-Oct", "7-10", RBC),
+         RBC = gsub("08-Dec", "8-12", RBC),
+         RBC = gsub("09-Nov", "9-11", RBC),
+         RBC = gsub("Dec-14", "12-14", RBC),
+         RBC = gsub("Jul-15", "7-15", RBC),
+         RBC = gsub("Nov-15", "11-15", RBC),
+         RBC = gsub("Oct-16", "10-16", RBC),
+         RBC = gsub("Sep-15", "9-15", RBC),
+         RBC = gsub("Dec-17", "12-17", RBC),
+         RBC = gsub("01-Jun", "1-6", RBC),
+         RBC = gsub("02-Jun", "2-6", RBC),
+         RBC = gsub("09-Dec", "9-12", RBC),
+         RBC = gsub("Jun-14", "6-14", RBC),
+         RBC = gsub("Nov-13", "9-13", RBC))
+
+
+test <- test %>%
+  mutate(WBC = gsub("Dec-15", "12-15", WBC),
+         WBC = gsub("01-Feb", "1-2", WBC),
+         WBC = gsub("04-Jun", "4-6", WBC),
+         WBC = gsub("03-May", "3-5", WBC),
+         WBC = gsub("01-Mar", "1-3", WBC),
+         WBC = gsub("02-Apr", "2-4", WBC),
+         WBC = gsub("10-Dec", "10-12", WBC),
+         WBC = gsub("Dec-15", "12-15", WBC),
+         WBC = gsub("04-Aug", "4-8", WBC),
+         WBC = gsub("02-May", "2-5", WBC),
+         WBC = gsub("05-Aug", "5-8", WBC),
+         WBC = gsub("06-Aug", "6-8", WBC),
+         WBC = gsub("08-Oct", "8-10", WBC),
+         WBC = gsub("01-Apr", "1-4", WBC),
+         WBC = gsub("01-May", "1-5", WBC),
+         WBC = gsub("02-Mar", "2-3", WBC),
+         WBC = gsub("03-Oct", "3-10", WBC),
+         WBC = gsub("04-Jul", "4-7", WBC),
+         WBC = gsub("03-Apr", "3-4", WBC),
+         WBC = gsub("03-Jul", "3-7", WBC),
+         WBC = gsub("03-Jun", "3-6", WBC),
+         WBC = gsub("04-May", "4-5", WBC),
+         WBC = gsub("04-Oct", "4-10", WBC),
+         WBC = gsub("05-Jul", "5-7", WBC),
+         WBC = gsub("05-Jun", "5-6", WBC),
+         WBC = gsub("05-Oct", "5-10", WBC),
+         WBC = gsub("07-Aug", "7-8", WBC),
+         WBC = gsub("07-Sep", "7-9", WBC),
+         WBC = gsub("07-Oct", "7-10", WBC),
+         WBC = gsub("08-Dec", "8-12", WBC),
+         WBC = gsub("09-Nov", "9-11", WBC),
+         WBC = gsub("Dec-14", "12-14", WBC),
+         WBC = gsub("Jul-15", "7-15", WBC),
+         WBC = gsub("Nov-15", "11-15", WBC),
+         WBC = gsub("Oct-16", "10-16", WBC),
+         WBC = gsub("Sep-15", "9-15", WBC),
+         WBC = gsub("Nov-14", "11-14", WBC),
+         WBC = gsub("Oct-15", "10-15", WBC),
+         WBC = gsub("Oct-18", "10-18", WBC),
+         WBC = gsub("02-Jul", "2-7", WBC),
+         WBC = gsub("08-Nov", "8-11", WBC))
+
+test <- test %>%
+  mutate(RBC = gsub("Dec-15", "12-15", RBC),
+         RBC = gsub("01-Feb", "1-2", RBC),
+         RBC = gsub("04-Jun", "4-6", RBC),
+         RBC = gsub("03-May", "3-5", RBC),
+         RBC = gsub("01-Mar", "1-3", RBC),
+         RBC = gsub("02-Apr", "2-4", RBC),
+         RBC = gsub("10-Dec", "10-12", RBC),
+         RBC = gsub("Dec-15", "12-15", RBC),
+         RBC = gsub("04-Aug", "4-8", RBC),
+         RBC = gsub("02-May", "2-5", RBC),
+         RBC = gsub("05-Aug", "5-8", RBC),
+         RBC = gsub("06-Aug", "6-8", RBC),
+         RBC = gsub("08-Oct", "8-10", RBC),
+         RBC = gsub("01-Apr", "1-4", RBC),
+         RBC = gsub("01-May", "1-5", RBC),
+         RBC = gsub("02-Mar", "2-3", RBC),
+         RBC = gsub("03-Oct", "3-10", RBC),
+         RBC = gsub("04-Jul", "4-7", RBC),
+         RBC = gsub("03-Apr", "3-4", RBC),
+         RBC = gsub("03-Jul", "3-7", RBC),
+         RBC = gsub("03-Jun", "3-6", RBC),
+         RBC = gsub("04-May", "4-5", RBC),
+         RBC = gsub("04-Oct", "4-10", RBC),
+         RBC = gsub("05-Jul", "5-7", RBC),
+         RBC = gsub("05-Jun", "5-6", RBC),
+         RBC = gsub("05-Oct", "5-10", RBC),
+         RBC = gsub("07-Aug", "7-8", RBC),
+         RBC = gsub("07-Sep", "7-9", RBC),
+         RBC = gsub("07-Oct", "7-10", RBC),
+         RBC = gsub("08-Dec", "8-12", RBC),
+         RBC = gsub("09-Nov", "9-11", RBC),
+         RBC = gsub("Dec-14", "12-14", RBC),
+         RBC = gsub("Jul-15", "7-15", RBC),
+         RBC = gsub("Nov-15", "11-15", RBC),
+         RBC = gsub("Oct-16", "10-16", RBC),
+         RBC = gsub("Sep-15", "9-15", RBC),
+         RBC = gsub("Dec-17", "12-17", RBC))
+```
+
+```{r}
+train <- train %>%
+  mutate_all(as.factor)
+test <- test %>%
+  mutate_all(as.factor)
+```
+
+#### Prior Probabilities
+
+```{r}
+class_counts <- table(train$Diagnosis)
+priors <- class_counts / sum(class_counts)
+priors
+```
+
+#### Conditional Probabilities
+
+```{r}
+laplace = 1
+conditionals <- list() 
+
+for (feature in colnames(train)[-which(colnames(train) == "Diagnosis")]) {
+    feature_vals <- unique(train[[feature]])
+    class_vals <- unique(train[["Diagnosis"]])
+    
+    table <- matrix(0, nrow = length(feature_vals), ncol = length(class_vals))
+    rownames(table) <- feature_vals
+    colnames(table) <- class_vals    
+    
+    for (i in 1:nrow(train)) {
+      row_idx <- which(feature_vals == train[[feature]][i])
+      col_idx <- which(class_vals == train[["Diagnosis"]][i])
+      table[row_idx, col_idx] <- table[row_idx, col_idx] + 1
+    }
+    
+    table <- t(table)
+    table <- (table + laplace) / (rowSums(table) + (length(feature_vals) * laplace))
+    print(table)
+    conditionals[[feature]] <- table
+}
+
+```
+
+#### Prediction
+
+```{r}
+predictions <- c()
+
+for (i in 1:nrow(test)) {
+    sample <- test[i, ]
+    probabilities <- rep(0, length(priors))
+
+    for (class_idx in seq_along(priors)) {
+      probabilities[class_idx] <- priors[class_idx]
+      for (feature in names(conditionals)) {
+      feature_val <- as.character(sample %>% pull(feature))
+
+      if (feature_val %in% colnames(conditionals[[feature]])) {
+        probabilities[class_idx] <- probabilities[class_idx] * 
+                                    conditionals[[feature]][class_idx, feature_val]
+      }
+    }
+    }
+    predictions <- c(predictions, names(priors)[which.max(probabilities)])
+}
+
+predictions <- factor(predictions)
+```
+
+#### Performance Metrics
+
+```{r, include=FALSE}
+test$Diagnosis <- factor(test$Diagnosis, levels = c("POSITIVE", "NEGATIVE")) 
+predictions <- factor(predictions, levels = c("POSITIVE", "NEGATIVE"))
+```
+
+```{r}
+confusionMatrix(predictions, test$Diagnosis)
+```
+
+```{r}
+accuracy <- sum(predictions == test$Diagnosis) / length(predictions) 
+print(accuracy)
+```
+
+#### Q 3-2)
+
+```{r}
+for (feature in colnames(train)) {
+  num_unique <- length(unique(train[[feature]]))
+  print(paste0("Feature '", feature, "' has ", num_unique, " unique values"))
+}
+```
+
+#### Q 3-4)
+
+```{r}
+sum_differences <- list()
+differences <- list()
+
+for (feature in names(conditionals)) {
+  diff_table <- abs(conditionals[[feature]][1, ] - conditionals[[feature]][2, ])
+  differences[[feature]] <- diff_table
+}
+
+for (feature in names(differences)) {
+  sum_diff <- sum(differences[[feature]])
+  sum_differences[[feature]] <- sum_diff
+}
+
+for (feature in names(sum_differences)) {
+  cat("Feature:", feature, "\n")
+  cat("Total sum of differences:", sum_differences[[feature]], "\n\n")
+}
+```
+
+#### Q 3-5)
+
+```{r}
+positive_count <- 752
+negative_count <- 1024
+
+total_count <- positive_count + negative_count
+positive_percent <- (positive_count / total_count) * 100
+negative_percent <- (negative_count / total_count) * 100
+
+pie_data <- class_counts
+names(pie_data) <- c("Negative", "Positive")
+pie(pie_data, main = "Class Distribution in Train Set", col = c("skyblue", "lightcoral"),
+    border = NA, labels = paste(names(pie_data), sprintf("%.1f%%", prop.table(pie_data) * 100), sep="\n"))
+```

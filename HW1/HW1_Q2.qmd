@@ -1,0 +1,49 @@
+---
+title: "HW#1_Q2"
+format: html
+editor: visual
+---
+
+```{r, message=FALSE, warning=FALSE, include=FALSE}
+library(dplyr)
+```
+
+```{r, message=FALSE, warning=FALSE}
+setwd("C:/Users/yigid/OneDrive/Desktop/Question 2")
+giant_heights_txt <- readLines("giant_heights.txt")
+giant_heights <- sort(as.numeric(giant_heights_txt))
+```
+
+```{r}
+sum_heights <- sum(giant_heights)
+
+num_observations <- length(giant_heights)
+
+mean_value <- sum_heights / num_observations #MLE for mean
+
+sum_sq_diff <- sum((giant_heights - mean_value)^2)
+
+mle_variance <- sum_sq_diff / (num_observations - 1) #MLE for variance
+```
+
+```{r}
+mean_value
+mle_variance
+```
+
+```{r}
+true_mean <- 50
+true_variance <- 5
+
+x <- seq(35, 65, length.out = 1000)
+
+y_original <- dnorm(x, mean = true_mean, sd = sqrt(true_variance))
+y_mle <- dnorm(x, mean = mean_value, sd = sqrt(mle_variance))
+
+
+plot(x, y_original, type = "l", lwd = 2, col = "blue", 
+     xlab = "x", ylab = "Density", 
+     main = "Normal Distributions")
+lines(x, y_mle, type = "l", lwd = 2, col = "red", lty = 2)
+legend("topright", legend = c("Goddess Distribution", "Giant Sample"), col = c("blue", "red"), lty = 1:2, lwd = 2)
+```
